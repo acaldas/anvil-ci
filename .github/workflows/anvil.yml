@@ -1,0 +1,18 @@
+on:
+  pull_request:
+    types: 
+      - assigned
+
+name: anvil
+
+jobs:
+  check:
+    name: Foundry project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+      - name: Run anvil
+        run: anvil >> $GITHUB_STEP_SUMMARY
