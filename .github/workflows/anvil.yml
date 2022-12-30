@@ -1,18 +1,26 @@
-on:
-  pull_request:
-    types: 
-      - assigned
+on: workflow_dispatch
 
 name: anvil
 
 jobs:
-  check:
-    name: Foundry project
+  deploy-anvil:
+    name: Deploy Anvil
     runs-on: ubuntu-latest
     steps:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
+      - id: ngrok 
+        uses: luisboto/ngrok-tunnel-action@v0.1.7.2
+        with:
+          timeout: 1h
+          ngrok_authtoken: ${{ secrets.NGROK_AUTHTOKEN }}
+          port: 8545
+          tunnel_type: http
+      - name: Print Ngrok URL
+        run: echo ${{ steps.ngrok.outputs.tunnel-url }}
+        shell: bash
       - name: Run anvil
-        run: anvil >> $GITHUB_STEP_SUMMARY
+        run: anvil
+        shell: bash
